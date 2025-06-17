@@ -8,6 +8,7 @@ const {
     isLoggedIn
 } = require('./middleware')
 
+// localhost:3000/api/products/
 app.get('/', async(req,res,next) => {
     try {
         res.send(await fetchProducts())
@@ -16,6 +17,7 @@ app.get('/', async(req,res,next) => {
     }
 })
 
+// locaolhost:3000/api/products/:id
 app.put('/:id', isLoggedIn, isAdmin, (req,res,next) => {
     res.send('created product')
 })

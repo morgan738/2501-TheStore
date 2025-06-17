@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken")
 
 const findUserByToken = async(token) => {
     try {
+        console.log(token,  process.env.JWT)
         const payload = await jwt.verify(token, process.env.JWT)
         console.log(payload)
         const SQL = `

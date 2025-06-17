@@ -5,6 +5,7 @@ const {
 const isLoggedIn = async(req,res,next) => {
 
     try {
+        console.log(req.headers)
         const user = await findUserByToken(req.headers.authorization)
         req.user = user
         next()
