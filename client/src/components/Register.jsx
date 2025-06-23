@@ -2,12 +2,12 @@ import axios from "axios"
 import { useNavigate } from "react-router-dom"
 import { useState } from "react"
 
-const Login = ({attempLoginWithToken}) => {
+const Register = () => {
     const navigate = useNavigate()
     const [error, setError] = useState('')
 
-    const login = async (formData) => {
-        //express route--> /api/auth/login
+    const register = async (formData) => {
+        //express route--> /api/users/register
         const username = formData.get('username')
         const password = formData.get('password')
         //console.log(username, password)
@@ -16,31 +16,26 @@ const Login = ({attempLoginWithToken}) => {
             password
         }
         try {
-            setError('')
-            const {data} = await axios.post('/api/auth/login', user)
+            const {data} = await axios.post('/api/users/register', user)
             //console.log(data)
-            const {token} = data
-            window.localStorage.setItem('token', token)
-            attempLoginWithToken()
+            alert('registration successful! thank you')
             navigate('/')
+            
         } catch (error) {
             console.error(error)
-            if(error.status === 401){
-                setError('incorrect credentials')
+            if(error.status === 500){
+                setError('invalid username or password')
             }else{
                 setError(error.message)
             }
             
-            
         }
-        
-        
     }
 
-    return(
+    return (
         <div>
-            <h1>Login</h1>
-            <form action={login}>
+            <h1>Register</h1>
+            <form action={register}>
                 <label>
                     Username:
                     <input type="text" name="username"/>
@@ -55,13 +50,12 @@ const Login = ({attempLoginWithToken}) => {
             {
                 error ? (
                     <h2>{error}</h2>
-                ) : (
+                ): (
                     null
                 )
             }
         </div>
-        
     )
 }
 
-export default Login
+export default Register

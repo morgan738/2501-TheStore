@@ -1,3 +1,20 @@
 .favorite{
     border: 2px black solid;
 }
+nav {
+    border: 2px black solid;
+}
+nav > *{
+    margin: 1rem;
+}
+
+nav > a.selected {
+    transition: all 1s;
+    font-size: x-large;
+    background-color: blue;
+    color: white;
+}
+
+nav > a{
+    transition: all 1s;
+}
