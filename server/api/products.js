@@ -2,6 +2,7 @@ const express = require('express')
 const app = express.Router()
 const {
     fetchProducts,
+    createProduct
 } = require('../db/products')
 const {
     isAdmin,
@@ -17,9 +18,9 @@ app.get('/', async(req,res,next) => {
     }
 })
 
-// locaolhost:3000/api/products/:id
-app.put('/:id', isLoggedIn, isAdmin, (req,res,next) => {
-    res.send('created product')
+// localhost:3000/api/products/:id
+app.put('/:id', isLoggedIn, isAdmin, async (req,res,next) => {
+    res.send(await createProduct(req.body))
 })
 
 

@@ -17,7 +17,7 @@ app.get('/',isLoggedIn, async(req,res,next) => {
     }
 })
 
-app.post('/', async(req,res,next) => {
+app.post('/', isLoggedIn, async(req,res,next) => {
     try {
         res.send(await createFavorite(req.body))
     } catch (error) {
@@ -25,7 +25,7 @@ app.post('/', async(req,res,next) => {
     }
 })
 
-app.delete('/:fav_id/user/:user_id', async(req,res,next) => {
+app.delete('/:fav_id/user/:user_id', isLoggedIn, async(req,res,next) => {
     try {
         
         await deleteFavorite({id: req.params.fav_id, user_id: req.params.user_id})

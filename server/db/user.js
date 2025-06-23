@@ -8,6 +8,7 @@ const createUser = async(user) => {
         throw Error('must have username and password')
     }
     user.password = await bcrypt.hash(user.password, 5)
+    user.is_admin ? user.is_admin = user.is_admin : user.is_admin = false
     const SQL = `
         INSERT INTO users(id, username, password, is_admin)
         VALUES ($1, $2, $3, $4)
