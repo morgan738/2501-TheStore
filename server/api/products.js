@@ -18,9 +18,14 @@ app.get('/', async(req,res,next) => {
     }
 })
 
-// localhost:3000/api/products/:id
-app.put('/:id', isLoggedIn, isAdmin, async (req,res,next) => {
-    res.send(await createProduct(req.body))
+// localhost:3000/api/products/
+app.post('/', isLoggedIn, isAdmin, async (req,res,next) => {
+    try {
+        
+        res.send(await createProduct(req.body))
+    } catch (error) {
+        next(error)
+    }
 })
 
 

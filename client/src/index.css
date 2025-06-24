@@ -18,3 +18,8 @@ nav > a.selected {
 nav > a{
     transition: all 1s;
 }
+
+.userlistDiv {
+    margin: .5rem;
+    border: 1px dotted black;
+}

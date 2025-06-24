@@ -4,9 +4,13 @@ const {
     fetchUsers,
     createUser
 } = require('../db/user')
+const {
+    isAdmin,
+    isLoggedIn
+} = require('./middleware')
 
 
-app.get('/', async(req,res,next) => {
+app.get('/', isLoggedIn, isAdmin, async(req,res,next) => {
     try {
         res.send(await fetchUsers())
     } catch (error) {

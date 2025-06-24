@@ -1,6 +1,6 @@
 import axios from "axios"
 
-const Products = ({products, favorites, user, getHeaders, setFavorites}) => {
+const Products = ({products, favorites, user, getHeaders, setFavorites, createLineItem, cartItems, lineItems, updateLineItem}) => {
 
     const findFav = (product) => {
         if(user === undefined){
@@ -28,6 +28,7 @@ const Products = ({products, favorites, user, getHeaders, setFavorites}) => {
             <h2>Products</h2>
             {
                 products.map((product) => {
+                    const cartItem = cartItems.find(lineItem => lineItem.product_id === product.id)
                     return(
                         <ul key={product.id}>
                             <li className= { findFav(product)? "favorite":"" }>
@@ -50,6 +51,14 @@ const Products = ({products, favorites, user, getHeaders, setFavorites}) => {
                                         null
                                     )
                                 }
+                                {
+                                    cartItem ? (
+                                        <button onClick={() => updateLineItem(cartItem)}>Add another</button>
+                                    ) : (
+                                        <button onClick={() => createLineItem(product)}>Add to Cart</button>
+                                    )
+                                }
+                                
                                 
                             </li>
                         </ul>

@@ -8,12 +8,22 @@ const {
 const {
   createFavorite
 } = require('./favorites')
+const {
+    fetchOrders,
+    updateOrder
+} = require('./orders')
+const {
+    createLineItem,
+    updateLineItem
+} = require('./lineitems')
 
 const seed = async () => {
     const SQL = `
         DROP TABLE IF EXISTS favorites;
-        DROP TABLE IF EXISTS users;
+        DROP TABLE IF EXISTS line_items;
         DROP TABLE IF EXISTS products;
+        DROP TABLE IF EXISTS orders;
+        DROP TABLE IF EXISTS users;
 
         CREATE TABLE users(
             id UUID PRIMARY KEY,
@@ -24,6 +34,18 @@ const seed = async () => {
         CREATE TABLE products(
             id UUID PRIMARY KEY,
             name VARCHAR(100) UNIQUE NOT NULL
+        );
+        CREATE TABLE orders(
+            id uuid PRIMARY KEY,
+            is_cart BOOLEAN NOT NULL DEFAULT true,
+            user_id UUID REFERENCES users(id) NOT NULL
+        );
+        CREATE TABLE line_items(
+            id UUID PRIMARY KEY,
+            product_id UUID REFERENCES products(id) NOT NULL,
+            order_id UUID REFERENCES orders(id) NOT NULL,
+            quantity INTEGER DEFAULT 1,
+            CONSTRAINT product_and_order_key UNIQUE(product_id, order_id)
         );
         CREATE TABLE favorites(
             id UUID PRIMARY KEY,
@@ -50,6 +72,15 @@ const seed = async () => {
         createFavorite({user_id: ethyl.id, product_id: aquaphor.id}),
         createFavorite({user_id: rowan.id, product_id: aquaphor.id})
     ])
+
+    let orders = await fetchOrders(ethyl.id)
+    let cart = orders.find((order) => order.is_cart)
+    let lineItem = await createLineItem({order_id:cart.id, product_id:aquaphor.id})
+    lineItem.quantity++
+    await updateLineItem(lineItem)
+    lineItem = await createLineItem({order_id:cart.id, product_id:protein.id})
+    //cart.is_cart = false
+    await updateOrder(cart)
 
     console.log('created tables and seeded data')
 }

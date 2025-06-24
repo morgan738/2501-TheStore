@@ -5,12 +5,17 @@ import Login from './components/Login'
 import AboutMe from './components/AboutMe'
 import Register from './components/Register'
 import Homepage from './components/Homepage'
+import Admin from './components/Admin'
+import Cart from './components/Cart'
+import Orders from './components/Orders'
 import axios from 'axios'
 
 function App() {
   const [products, setProducts] = useState([])
   const [user, setUser] = useState({})
   const [favorites, setFavorites] = useState([])
+  const [orders, setOrders] = useState([])
+  const [lineItems, setLineItems] = useState([])
 
   const navigate = useNavigate()
   const location = useLocation()
@@ -67,6 +72,28 @@ function App() {
   }, [])
 
   useEffect(() => {
+    if(user.id){
+      const fetchOrders = async () => {
+        const {data} = await axios.get('/api/orders', getHeaders())
+        console.log(data)
+        setOrders(data)
+      }
+      fetchOrders()
+    }
+  }, [user])
+
+  useEffect(() => {
+    if(user.id){
+      const fetchLineItems = async () => {
+        const {data} = await axios.get('/api/lineitems', getHeaders())
+        //console.log("this is line items" , data)
+        setLineItems(data)
+      }
+      fetchLineItems()
+    }
+  }, [user])
+
+  useEffect(() => {
     const fetchFavorites = async () => {
       try {
         const {data} = await axios.get('/api/favorites', getHeaders())
@@ -83,6 +110,32 @@ function App() {
     }
   },[user])
 
+  const cart = orders.find((order) => order.is_cart) || {}
+  const cartItems = lineItems.filter((lineItem) =>lineItem.order_id === cart.id)
+  console.log(cartItems)
+
+  const updateOrder = async (order) => {
+    await axios.put(`/api/orders/${order.id}`, order, getHeaders())
+    const {data} = await axios.get('/api/orders', getHeaders())
+    setOrders(data)
+  }
+
+  const createLineItem = async (product) => {
+    const {data} = await axios.post('/api/lineItems', {
+      order_id: cart.id,
+      product_id: product.id
+    },getHeaders())
+    setLineItems([...lineItems, data])
+  }
+
+  const updateLineItem = async (lineItem) => {
+    const response = await axios.put(`/api/lineitems/${lineItem.id}`,{
+      quantity: lineItem.quantity + 1,
+      order_id: cart.id
+    }, getHeaders())
+    setLineItems(lineItems.map(lineItem => lineItem.id == response.data.id ? response.data : lineItem))
+  }
+
   return (
     <div>
       {
@@ -93,6 +146,11 @@ function App() {
               <Link to={`/user/${user.id}`} className={checkNavSelected(`/user/${user.id}`) ? 'selected' : ''}>About Me</Link>
               <Link to='/products' className={checkNavSelected('/products') ? 'selected' : ''}>Products ({products.length})</Link>
               <span>Welcome {user.username}</span>
+              {
+                user.is_admin ? <Link to='/admin' className={checkNavSelected('/admin') ? 'selected' : ''}>Admin</Link> : null
+              }
+              <Link to='/cart' className={checkNavSelected('/cart') ? 'selected' : ''} >Cart</Link>
+              <Link to='/orders' className={checkNavSelected('/orders') ? 'selected' : ''} >Orders</Link>
               <button onClick={logout}>Logout</button>
             </nav>
               <Routes>
@@ -103,7 +161,12 @@ function App() {
                     favorites={favorites} 
                     user={user} 
                     getHeaders={getHeaders} 
-                    setFavorites={setFavorites}/>
+                    setFavorites={setFavorites}
+                    createLineItem={createLineItem}
+                    cartItems = {cartItems}
+                    lineItems={lineItems}
+                    updateLineItem = {updateLineItem}
+                    />
                   }/>
                 <Route path='/user/:id' element={
                   <AboutMe 
@@ -113,6 +176,14 @@ function App() {
                     getHeaders={getHeaders} 
                     setFavorites={setFavorites}/>
                   }/>
+                  <Route path='/admin' element={
+                    <Admin 
+                      products={products} 
+                      setProducts={setProducts} 
+                      getHeaders={getHeaders}/>
+                    }/>
+                    <Route path='/cart' element={<Cart cart={cart} lineItems={lineItems} products={products} updateOrder={updateOrder}/>}/>
+                    <Route path='/orders' element={<Orders orders={orders} products={products} lineItems={lineItems}/>}/>
               </Routes>
             <div>
               
