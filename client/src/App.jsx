@@ -8,6 +8,7 @@ import Homepage from './components/Homepage'
 import Admin from './components/Admin'
 import Cart from './components/Cart'
 import Orders from './components/Orders'
+import ProductImageEditor from './components/ProductImageEditor'
 import axios from 'axios'
 
 function App() {
@@ -112,7 +113,7 @@ function App() {
 
   const cart = orders.find((order) => order.is_cart) || {}
   const cartItems = lineItems.filter((lineItem) =>lineItem.order_id === cart.id)
-  console.log(cartItems)
+  
 
   const updateOrder = async (order) => {
     await axios.put(`/api/orders/${order.id}`, order, getHeaders())
@@ -182,6 +183,7 @@ function App() {
                       setProducts={setProducts} 
                       getHeaders={getHeaders}/>
                     }/>
+                  <Route path='/admin/products/edit/:id' element={<ProductImageEditor products={products} setProducts={setProducts} getHeaders={getHeaders}/>}/>
                     <Route path='/cart' element={<Cart cart={cart} lineItems={lineItems} products={products} updateOrder={updateOrder}/>}/>
                     <Route path='/orders' element={<Orders orders={orders} products={products} lineItems={lineItems}/>}/>
               </Routes>

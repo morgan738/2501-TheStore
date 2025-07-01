@@ -28,11 +28,18 @@ const Products = ({products, favorites, user, getHeaders, setFavorites, createLi
             <h2>Products</h2>
             {
                 products.map((product) => {
-                    const cartItem = cartItems.find(lineItem => lineItem.product_id === product.id)
+                    let cartItem
+                    if(user){
+                        cartItem = cartItems.find(lineItem => lineItem.product_id === product.id)
+                    }else{
+                        cartItem = null
+                    }
+                    
                     return(
                         <ul key={product.id}>
-                            <li className= { findFav(product)? "favorite":"" }>
+                            <li className= { findFav(product)? "favorite product":"product" } >
                                 {product.name}
+                                {product.image ? <img src={product.image} /> : null}
                                 {
                                     user ? (
                                         <div>
@@ -52,12 +59,19 @@ const Products = ({products, favorites, user, getHeaders, setFavorites, createLi
                                     )
                                 }
                                 {
-                                    cartItem ? (
-                                        <button onClick={() => updateLineItem(cartItem)}>Add another</button>
+                                    user ? (
+                                        
+                                        cartItem ? (
+                                            <button onClick={() => updateLineItem(cartItem)}>Add another</button>
+                                        ) : (
+                                            <button onClick={() => createLineItem(product)}>Add to Cart</button>
+                                        )
+
                                     ) : (
-                                        <button onClick={() => createLineItem(product)}>Add to Cart</button>
+                                        null
                                     )
                                 }
+                                
                                 
                                 
                             </li>

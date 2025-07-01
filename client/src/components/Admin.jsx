@@ -1,10 +1,14 @@
 import axios from "axios"
 import { useState, useEffect } from "react"
+import { Link } from "react-router-dom"
+
 
 const Admin = ({getHeaders, products, setProducts}) => {
     const [showCreateProd, setShowCreateProd] = useState(false)
     const [showAllUsers, setShowAllUsers] = useState(false)
+    const [showUpdateProd, setShowUpdateProd] = useState(false)
     const [usersList, setUsersList] = useState([])
+
 
     useEffect(() => {
         const fetchUsers = async() => {
@@ -20,6 +24,10 @@ const Admin = ({getHeaders, products, setProducts}) => {
     const toggleUsers = () => {
         setShowAllUsers(!showAllUsers)
     }
+    const toggleShowUpdateProd = () => {
+        setShowUpdateProd(!showUpdateProd)
+    }
+
     const createProd = async (formData) => {
         const name = formData.get('product_name')
         
@@ -52,6 +60,26 @@ const Admin = ({getHeaders, products, setProducts}) => {
                         <button onClick={createProd}>Create</button>
                     </form>
                 ) : (
+                    null
+                )
+            }
+            <h3 onClick={toggleShowUpdateProd}>Click to Update Product</h3>
+            {
+                showUpdateProd ? (
+                    <div>
+                        <h4>Update Product</h4>
+                        {
+                            products.map((product) => {
+                                return (
+                                    <div>
+                                        <Link to={`/admin/products/edit/${product.id}`}>{product.name}</Link>
+                                    </div>
+                                )
+                            })
+                        }
+                        
+                    </div>
+                ): (
                     null
                 )
             }

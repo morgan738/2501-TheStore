@@ -1,4 +1,6 @@
 const client = require("./client")
+const path = require('path')
+const fs = require('fs')
 const {
   createUser
 } = require('./user')
@@ -17,6 +19,20 @@ const {
     updateLineItem
 } = require('./lineitems')
 
+const loadImage = (filePath) => {
+    return new Promise((resolve, reject) => {
+        const fullPath = path.join(__dirname, filePath)
+        //console.log(fullPath)
+        fs.readFile(fullPath, 'base64', (err, result) => {
+            if(err){
+                reject(err)
+            }else{
+                resolve(`data:image/png;base64,${result}`)
+            }
+        })
+    })
+}
+
 const seed = async () => {
     const SQL = `
         DROP TABLE IF EXISTS favorites;
@@ -33,7 +49,8 @@ const seed = async () => {
         );
         CREATE TABLE products(
             id UUID PRIMARY KEY,
-            name VARCHAR(100) UNIQUE NOT NULL
+            name VARCHAR(100) UNIQUE NOT NULL,
+            image TEXT
         );
         CREATE TABLE orders(
             id uuid PRIMARY KEY,
@@ -56,10 +73,14 @@ const seed = async () => {
 
     `
     await client.query(SQL)
+
+    const aquaphorImage = await loadImage('images/aquaphor.png')
+    const proteinImage = await loadImage('images/protein.jpg')
+
     const [car, protein, aquaphor] = await Promise.all([
         createProduct({name:'car'}),
-        createProduct({name:'protein powder'}),
-        createProduct({name: 'aquaphor'})
+        createProduct({name:'protein powder', image:proteinImage}),
+        createProduct({name: 'aquaphor', image:aquaphorImage})
     ])
 
     const [ethyl, rowan, morgan] = await Promise.all([
