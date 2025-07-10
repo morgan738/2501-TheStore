@@ -7,9 +7,16 @@ const app = express();
 //body parsing middleware
 app.use(express.json());
 
+try {
+  require('./env')
+} catch (error) {
+  console.log('if running locally add env.js file')
+}
+app.engine('html', require('ejs').renderFile)
+
 //for deployment only
 const path = require('path');
-app.get('/', (req, res)=> res.sendFile(path.join(__dirname, '../client/dist/index.html')));
+app.get('/', (req, res)=> res.render((path.join(__dirname, '../client/dist/index.html')), {GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID} ));
 app.use('/assets', express.static(path.join(__dirname, '../client/dist/assets'))); 
 
 //use api routes

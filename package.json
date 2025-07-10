@@ -5,16 +5,18 @@
   "main": "index.js",
   "scripts": {
     "start:dev": "JWT=thisissocool nodemon server",
-    "start:dev:sync" : "SYNC=true nodemon server"
+    "start:dev:sync": "SYNC=true nodemon server"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "axios": "^1.10.0",
     "nodemon": "^3.1.10"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
+    "ejs": "^3.1.10",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "pg": "^8.16.0",

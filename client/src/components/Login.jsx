@@ -51,6 +51,8 @@ const Login = ({attempLoginWithToken}) => {
                 </label>
                 <button>Login</button>
             </form>
+            <br/>
+            <a href={`https://github.com/login/oauth/authorize?client_id=${window.GITHUB_CLIENT_ID}`}>Login through Github</a>
             <hr/>
             {
                 error ? (

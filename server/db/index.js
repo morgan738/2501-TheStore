@@ -44,7 +44,9 @@ const seed = async () => {
         CREATE TABLE users(
             id UUID PRIMARY KEY,
             username VARCHAR(100) UNIQUE NOT NULL,
-            password VARCHAR(100) NOT NULL,
+            password VARCHAR(100),
+            is_Oauth BOOLEAN DEFAULT false,
+            CHECK((password IS NOT NULL AND is_Oauth=false) OR (password IS NULL AND is_Oauth=true)),
             is_admin BOOLEAN DEFAULT false NOT NULL
         );
         CREATE TABLE products(
